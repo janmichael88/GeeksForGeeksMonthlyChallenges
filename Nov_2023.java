@@ -91,3 +91,65 @@ class Solution {
         return head[0];
     }
 }
+
+/*
+ *  Reverse a Doubly Linked List
+
+ */
+class Solution{
+
+
+    public static Node reverseDLL(Node  head)
+    {
+        //Your code here
+        Node curr = head;
+        Node temp = head.next;
+        
+        while (temp != null){
+            swap(curr);
+            curr = temp;
+            temp = temp.next;
+        }
+        
+        swap(curr);
+        return curr;
+    }
+
+
+    public static void swap(Node node){
+        //keep reference to prev node before swapping
+        Node temp = node.prev;
+        node.prev = node.next;
+        node.next = temp;
+    }
+}
+
+class Solution{
+
+
+    //Function to reverse a doubly linked list
+    public static Node reverseDLL(Node head)
+    {
+        //checking if head is null or head.next is null,
+        //if true, then return the head itself as there is no need to reverse a list with 0 or 1 node
+        if(head == null || head.next == null)
+            return head;
+        
+        //declaring a current and previous node
+        Node curr = head, prev = null;
+        
+        //looping through the list
+        while(curr != null){
+            //storing the previous node in prev
+            prev = curr.prev;
+            //swapping the prev and next pointers of the current node
+            curr.prev = curr.next;
+            curr.next = prev;
+            
+            //moving the current node to its previous node
+            curr = curr.prev;
+        }
+        //returning the previous node of head as the new head (the last node after reversing the list)
+        return prev.prev;
+
+}
