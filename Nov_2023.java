@@ -153,3 +153,40 @@ class Solution{
         return prev.prev;
 
 }
+
+/*
+ * Intersection of two sorted Linked lists
+ */
+class Solution
+{
+   public static Node findIntersection(Node head1, Node head2)
+    {
+        // code here.
+        /*
+        dummy list and add to list if they are equal, otherwise move the smaller one
+        */
+        Node dummy = new Node(-1);
+        Node curr = dummy;
+        
+        while ((head1 != null) && (head2 != null)){
+            //match
+            if (head1.data == head2.data){
+                Node temp = new Node(head1.data);
+                curr.next = temp;
+                curr = curr.next;
+                head1 = head1.next;
+                head2 = head2.next;
+            }
+            
+            else if (head1.data < head2.data){
+                head1 = head1.next;
+            }
+            
+            else{
+                head2 = head2.next;
+            }
+        }
+        
+        return dummy.next;
+    }
+}
