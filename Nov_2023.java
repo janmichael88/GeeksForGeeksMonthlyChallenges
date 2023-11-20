@@ -190,3 +190,89 @@ class Solution
         return dummy.next;
     }
 }
+
+/*
+ * K Sum Paths
+keep path in list, and every time go backwards from the path, and when sum == k, this is a path from the current ndoe to tned of the path
+
+ */
+
+class Solution
+{
+    int count = 0;
+    public int sumK(Node root,int k)
+    {
+        // code here 
+        ArrayList<Integer> path = new ArrayList<>();
+        dp(root,k,path);
+        return count;
+    }
+    
+    void dp(Node node, int k, ArrayList<Integer> path){
+        if (node == null){
+            return;
+        }
+        
+        path.add(node.data);
+        int sum = 0;
+        //go backwards
+        for (int i = path.size() - 1; i >= 0; i--){
+            sum += path.get(i);
+            if (sum == k){
+                count++;
+            }
+        }
+        
+        dp(node.left,k,path);
+        dp(node.right,k,path);
+        //backtrack
+        path.remove(path.size() - 1);
+    }
+}
+
+class Solution
+{
+    int mod = 1_000_000_007;
+    int ans = 0;
+    HashMap<Integer,Integer> mapp = new HashMap<>();
+    public int sumK(Node root,int k)
+    {
+        /*
+        we can use prefix sum, but with tree insteaf
+        maintain running sum as we go down the tree and at each step, check whether the difference between running sum and k has been seen before
+        we can use hashmap to store counts of path sums
+        */
+        dp(root,k,0);
+        return ans;
+    }
+    
+    public void dp(Node root, int needed_sum, int curr_sum){
+        if (root == null){
+            return;
+        }
+        
+        //find complement
+        //mapp is global
+        int complement = curr_sum + root.data - needed_sum;
+        ans = (ans + mapp.getOrDefault(complement,0)) % mod;
+        ans %= mod;
+        
+        //not only check for complement, but also the current path
+        if ((curr_sum + root.data) == needed_sum){
+            ans += 1;
+            ans %= mod;
+        }
+        
+        //update mapp with curr sum
+        mapp.put(curr_sum + root.data, (mapp.getOrDefault(curr_sum + root.data,0) + 1) % mod);
+        
+        //recurse
+        dp(root.left,needed_sum, curr_sum + root.data);
+        dp(root.right,needed_sum, curr_sum + root.data);
+        
+        //backtrack
+        mapp.put(curr_sum + root.data, (mapp.getOrDefault(curr_sum + root.data,0) - 1) % mod);
+    }
+}
+
+//dont forget prefix sum and compelment sum with binary trees
