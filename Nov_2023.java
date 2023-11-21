@@ -344,3 +344,50 @@ class Solution
 	}
 	
 }
+
+/*
+ * 
+Symmetric Tree
+ */
+
+ // complete this function
+// return true/false if the is Symmetric or not
+class GfG
+{
+    // return true/false denoting whether the tree is Symmetric or not
+    public static  boolean isSymmetric(Node root)
+    {
+        // add your code here;
+        /*
+        let dp(node) return whether or not a tree rooted is symetric
+        for the call at the root we we need dp(node.left) && dp(nodde.right)
+        empty node is trivally symmtric
+        need to pass in dp(node,node) for the same root
+        */
+        
+        return dp(root,root);
+    }
+    
+    public static boolean dp(Node p, Node q){
+        //empty cases, there are three
+        if (p == null && q == null){
+            return true;
+        }
+        
+        else if (p != null && q == null){
+            return false;
+        }
+        
+        else if (p == null & q != null){
+            return false;
+        }
+        
+        else if (p.data != q.data){
+            return false;
+        }
+        //need to check (left,right) and (right,left)
+        boolean left_right = dp(p.left,q.right);
+        boolean right_left = dp(p.right,q.left);
+        return left_right && right_left;
+    }
+}
