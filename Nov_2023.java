@@ -276,3 +276,71 @@ class Solution
 }
 
 //dont forget prefix sum and compelment sum with binary trees
+
+
+/*
+ * Determine if Two Trees are Identical
+ */
+class Solution
+{
+    //Function to check if two trees are identical.
+	boolean isIdentical(Node root1, Node root2)
+	{
+	    /*
+	    dp(p,q) returnes where nodes p and q are identical
+	    
+	    */
+	    return dp(root1,root2);
+	}
+	
+	boolean dp(Node p, Node q){
+	    //if one is empty and the other is not return false;
+	    if (p == null || q == null){
+	        return p == q;
+	    }
+	    
+	    if (p == null && q == null){
+	        return true;
+	    }
+	    
+	    if (p.data != q.data){
+	        return false;
+	    }
+	    
+	    return dp(p.left,q.left) && dp(p.right,q.right);
+	    
+	}
+	
+}
+
+class Solution
+{
+    //Function to check if two trees are identical.
+	boolean isIdentical(Node root1, Node root2)
+	{
+	    // Code Here
+	    /*
+	    if bothe trees are empty, they are the same
+	    if non empty, check nodes are same and simlar lareft and right
+	    */
+	    
+	    return dp(root1,root2);
+	}
+	
+	boolean dp(Node p, Node q){
+	    if (p == null && q == null){
+	        return true;
+	    }
+	    
+	    else if (p == null && q != null){
+	        return false;
+	    }
+	    //essentially have (p and not q) or (not p and q), which is just (p ^ q), mutually exclusive OR
+	    else if (p != null && q == null){
+	        return false;
+	    }
+	    
+	    return (p.data == q.data) && dp(p.left,q.left) && dp(p.right,q.right);
+	}
+	
+}
