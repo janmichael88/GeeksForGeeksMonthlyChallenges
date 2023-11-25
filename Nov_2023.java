@@ -459,3 +459,39 @@ class Solution
         return node.height;
     }
 } 
+
+/*
+ * Shuffle Array
+ */
+class  Solution
+{
+    void shuffleArray(long arr[], int n)
+    {
+        // Your code goes here
+        /*
+        split into two arrays and combein
+        a is left pair b is right pair
+        */
+        long[] a = new long[n/2];
+        long[] b = new long[n/2];
+        
+        for (int i = 0; i < n / 2; i++){
+            a[i] = arr[i];
+            b[i] = arr[i + n/ 2];
+        }
+        
+        int j = 0;
+        for (int i = 0; i < n; i += 2){
+            arr[i] = a[j];
+            arr[i+1] = b[j];
+            j++;
+            
+        }
+        
+
+        //System.out.println(Arrays.toString(a));
+        //System.out.println(Arrays.toString(b));
+        
+        
+    }
+}
