@@ -495,3 +495,67 @@ class  Solution
         
     }
 }
+
+/*
+ * Print Pattern
+ */
+
+ class Solution{
+    public List<Integer> pattern(int N){
+        // code here
+        /*
+        need to use recursino
+        forward and revers direction
+        */
+        ArrayList<Integer> ans = new ArrayList<>();
+        int first_end = decrement(N,ans);
+        int second_end = increment(first_end, N,ans);
+        ans.add(second_end);
+        return ans;
+    }
+    public int decrement(int N, ArrayList<Integer> ans){
+        
+        if (N <= 0){
+            return N;
+        }
+        
+        ans.add(N);
+        return decrement(N-5,ans);
+    }
+    
+    public int increment(int N, int limit, ArrayList<Integer> ans){
+        if (N >= limit){
+            return N;
+        }
+        
+        ans.add(N);
+        return increment(N+5,limit,ans);
+    }
+}
+
+//all in one function
+class Solution{
+    public List<Integer> pattern(int N){
+        // code here
+        /*
+        need to use recursino
+        forward and revers direction
+        */
+        ArrayList<Integer> ans = new ArrayList<>();
+        decrement(N,ans);
+        return ans;
+    }
+    public void decrement(int N, ArrayList<Integer> ans){
+        
+        if (N <= 0){
+            ans.add(N);
+            return;
+        }
+        
+        ans.add(N);
+        decrement(N-5,ans);
+        ans.add(N);
+    }
+    
+
+}
