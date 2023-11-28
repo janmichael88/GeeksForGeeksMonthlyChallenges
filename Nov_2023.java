@@ -559,3 +559,143 @@ class Solution{
     
 
 }
+
+/*
+ * Detect Cycle using DSU
+ */
+
+class DSU
+{
+    int[] parent;
+    int[] size;
+    
+    public DSU(int n){
+        parent = new int[n];
+        size = new int[n];
+        Arrays.fill(size,1);
+        //fill in sizes and self points
+        for (int i = 0; i < n; i++){
+            parent[i] = i;
+        }
+    }
+    
+    public int find(int x){
+        if (parent[x] == x){
+            return parent[x];
+        }
+        
+        parent[x] = find(parent[x]);
+        return parent[x];
+        
+    }
+    
+    public void union(int x, int y){
+        //find parents
+        int x_par = find(x);
+        int y_par = find(y);
+        
+        if (x_par == y_par){
+            return;
+        }
+        //bigger guy
+        if (size[x_par] > size[y_par]){
+            parent[y_par] = x_par;
+            size[x_par] += size[y_par];
+        }
+        //smalle guy, dont worry about shifting ranks
+        else{
+            parent[x_par] = y_par;
+            size[y_par] += size[x_par];
+        }
+        
+        
+    }
+}
+class Solution
+{
+    //Function to detect cycle using DSU in an undirected graph.
+    public int detectCycle(int V, ArrayList<ArrayList<Integer>> adj)
+    {
+        // Code here
+        /*
+        adj readhs node : {neigh nodes} this is a list
+        i dont need to rebuild
+        need to use DSU, if two nodes are already belong to the same parent, there is a cycle
+        when joining an edge, if the two nodes already belong to the same parent, then there is a cycle
+        just check find
+        */
+        DSU dsu = new DSU(V);
+        Set<String> set = new HashSet<>();
+        for (int node = 0; node < V; node++){
+            for (int neigh : adj.get(node)){
+                if (set.contains(helper(node,neigh))){
+                    continue;
+                }
+                
+                if (dsu.find(node) != dsu.find(neigh)){
+                    dsu.union(node,neigh);
+                    set.add(helper(node,neigh));
+                    set.add(helper(neigh,node));
+                }
+                else{
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+    
+    //use to hash an edge
+    public String helper(int a, int b){
+        String ans = Integer.toString(a);
+        ans += Integer.toString(b);
+        return ans;
+    }
+}
+
+/*
+ * Sum of Dependencies
+ */
+
+ class Solution {
+    int sumOfDependencies(ArrayList<ArrayList<Integer>> adj, int V) {
+        // code here
+        /*
+        depdencies are just in degree for a node
+        keep track of the indegree incounts array,
+        input it not an edge list, but an adjaceny list
+        */
+        int[] indegree = new int[V];
+        
+        for (ArrayList<Integer> neighs : adj){
+            for (int neigh : neighs){
+                indegree[neigh]++;
+            }
+        }
+        
+        int ans = 0;
+        for (int ind : indegree){
+            ans += ind;
+        }
+        return ans;
+    }
+};
+
+class Solution {
+    int sumOfDependencies(ArrayList<ArrayList<Integer>> adj, int V) {
+        // code here
+        /*
+        we can also do just the size
+        DUH!
+        */
+        int ans = 0;
+        
+        for (ArrayList<Integer> neighs : adj){
+            ans += neighs.size();
+        }
+        
+
+        return ans;
+    }
+};
+
