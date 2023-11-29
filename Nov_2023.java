@@ -699,3 +699,44 @@ class Solution {
     }
 };
 
+
+/*
+ * Euler circuit and Path
+ */
+class Solution{
+    public int isEulerCircuit(int V, List<Integer>[] adj) 
+    {
+        /*
+        eulerian path, visits every edge once, and ends up on different nodes
+        eulerian circuit, is an eulerian path but stats and ends on the sam vertex
+        
+        i.e a grpah will have an euler circuit if and only iff all degrees are even
+        a graph will contain an eiler path if and olf if it contains exactly two odd verticies
+        */
+        ArrayList<Integer> sizes = new ArrayList<>();
+        
+        int evendegrees = 0;
+        int odddegrees = 0;
+        
+        for (int i = 0; i < V; i++){
+            sizes.add(adj[i].size());
+        }
+        
+        for (int i = 0; i < V; i++){
+            if (sizes.get(i) % 2 == 0){
+                evendegrees++;
+            }
+            else{
+               odddegrees++; 
+            }
+        }
+        
+        if (evendegrees == V){
+            return 2;
+        }
+        else if (odddegrees > 0 && odddegrees == 2 ){
+            return 1;
+        }
+        return 0;
+    }
+}
