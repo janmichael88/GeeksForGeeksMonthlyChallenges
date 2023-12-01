@@ -740,3 +740,92 @@ class Solution{
         return 0;
     }
 }
+
+/*
+ * Check whether BST contains Dead End
+ */
+
+ class Solution
+{
+    public static boolean isDeadEnd(Node root)
+    {
+        //Add your code here.
+        /*
+        formal description, a leaf node is a node having value val and if nodes val+1 and val-1 already exsist in the tree
+        however for a node with value 1, we call it a Dead End, so we check for 2, one way to do it is hash all the nodes and check leaf end condidtions
+        */
+        HashSet<Integer> seen = new HashSet<>();
+        dfs(root,seen);
+        return check(root,seen);
+    }
+    
+    public static void dfs(Node node, HashSet<Integer> seen){
+        if (node == null){
+            return;
+        }
+        
+        seen.add(node.data);
+        dfs(node.left,seen);
+        dfs(node.right, seen);
+    }
+    
+    //check
+    public static boolean check(Node node, HashSet<Integer> seen){
+        //check conditions
+        if (node.left == null && node.right == null){
+            if (node.data == 1){
+                if (seen.contains(2)){
+                    return true;
+                }
+            }
+            
+            else if (node.data == 10001){
+                if (seen.contains(1000)){
+                    return true;
+                }
+            }
+            
+            else{
+                if (seen.contains(node.data - 1) && seen.contains(node.data + 1)){
+                    return true;
+                }
+            }
+            
+        }
+        
+        boolean left = (node.left != null) ? check(node.left,seen) : false;
+        boolean right = (node.right != null) ? check(node.right,seen) : false;
+        return left || right;
+
+    }
+}
+
+//Function should return true if a deadEnd is found in the bst otherwise return false.
+class Solution
+{
+    public static boolean isDeadEnd(Node root)
+    {
+        //Add your code here.
+        //another way is to just check if for a leaf node, we have x - 1 and x + 1 are in the trees
+        if (root == null){
+            return false;
+        }
+        return find(root, 0,Integer.MAX_VALUE);
+    }
+    public static boolean find(Node node, int MIN, int MAX){
+        if (node == null){
+            return false;
+        }
+        
+        if ((node.data - MIN == 1) && (MAX - node.data == 1)){
+            return true;
+        }
+        
+        boolean left = find(node.left, MIN, node.data);
+        boolean right = find(node.right, node.data, MAX);
+        if (left || right){
+            return true;
+        }
+        return false;
+    }
+}
