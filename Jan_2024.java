@@ -135,3 +135,44 @@ class Solution {
         return false;
     }
 }
+
+////////////////////////////////////////////
+// Paths from root with a specified sum
+// 21JAN24
+////////////////////////////////////////////
+class Solution
+{
+    public static ArrayList<ArrayList<Integer>> ans;
+    public static ArrayList<ArrayList<Integer>> printPaths(Node root, int sum)
+    {
+        // code here
+        /*
+        global dfs, pass path and curr sum along path
+        only on leaves we check
+        */
+        ans = new ArrayList<>();
+        ArrayList<Integer> curr_path = new ArrayList<>();
+        dfs(root,curr_path,0,sum);
+        return ans;
+    }
+    public static void dfs(Node node, ArrayList<Integer> path, int path_sum, int sum){
+        //is leaf
+        if (node == null){
+            return;
+        }
+        
+        path.add(node.data);
+        path_sum += node.data;
+        
+        if (path_sum == sum){
+            ans.add(new ArrayList<>(path));
+        }
+        if (node.left != null){
+            dfs(node.left,path,path_sum,sum);
+        }
+        if (node.right != null){
+            dfs(node.right,path,path_sum,sum);
+        }
+        path.remove(path.size() - 1); //dont forget to backtrack
+    }
+}
