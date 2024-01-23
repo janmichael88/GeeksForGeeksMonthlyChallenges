@@ -176,3 +176,62 @@ class Solution
         path.remove(path.size() - 1); //dont forget to backtrack
     }
 }
+
+/////////////////////////////////////////////////////
+// Course Schedule
+//  22JAN24
+/////////////////////////////////////////////////////
+class Solution
+{
+    static int[] findOrder(int n, int m, ArrayList<ArrayList<Integer>> prerequisites) 
+    {
+        // add your code here
+        /*
+        this is just kahns algroithm, start with nodes with 0 indegree, then for neighbors dropp edge
+        if indegree is zero add node to q
+        */
+        HashMap<Integer, ArrayList<Integer>> graph = new HashMap<>();
+        int[] indegree = new int[n];
+        ArrayList<Integer> path = new ArrayList<>();
+        for (ArrayList<Integer> edge : prerequisites){
+            //(index 1 into index 0) or v into u
+            int u = edge.get(0);
+            int v = edge.get(1);
+            indegree[u]++;
+            ArrayList<Integer> neighs = graph.getOrDefault(v, new ArrayList<>());
+            neighs.add(u);
+            graph.put(v,neighs);
+            
+        }
+        //q up nodes with 0 indegree
+        Deque<Integer> q = new ArrayDeque<>();
+        for (int i = 0; i < n; i++){
+            if (indegree[i] == 0)
+                q.add(i);
+        }
+
+        while (!q.isEmpty()){
+            int curr = q.pollFirst();
+            //add to ans
+            path.add(curr);
+            //find neighbors
+            for (int neigh : graph.getOrDefault(curr, new ArrayList<>())){
+                //remove ege going into neigh
+                indegree[neigh]--;
+                //if zero add to q
+                if (indegree[neigh] == 0)
+                    q.add(neigh);
+            }
+        }
+        
+        //need to check if ordering is even possible
+        for (int i = 0; i < n; i++){
+            if (indegree[i] > 0){
+                return new int[0];
+            }
+        }
+        int ans[] = path.stream().mapToInt(Integer::intValue).toArray();
+        return ans;
+    }
+}
+
