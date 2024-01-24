@@ -235,3 +235,72 @@ class Solution
     }
 }
 
+///////////////////////////////////////////////
+// Is it a tree?
+// 23JAN24
+//////////////////////////////////////////////
+class Solution {
+    public boolean isTree(int n, int m, ArrayList<ArrayList<Integer>> edges) 
+    {
+        // code here
+        /*
+        its a tree is we can touch all the nodes and there isn't a cycle
+        there is a coloring algorithm for cycle detection in undirected graph, but do i need to do it here?
+        need to pass parent and node
+        
+        
+        */
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+        for (int i = 0; i < n; i++){
+            graph.add(new ArrayList<>());
+        }
+        
+        for (ArrayList<Integer> edge : edges){
+            int u = edge.get(0);
+            int v = edge.get(1);
+            graph.get(u).add(v);
+            graph.get(v).add(u);
+        }
+        
+        boolean[] seen = new boolean[n];
+        dfs(graph,0,seen);
+        
+        //check we cant touch all
+        for (boolean val : seen){
+            if (!val){
+                return false;
+            }
+        }
+        
+        //check for cycle
+        Arrays.fill(seen, false);
+        return hasCycle(graph,0,-1,seen);
+    }
+    public void dfs(ArrayList<ArrayList<Integer>> graph, int node, boolean[] seen){
+        //mark
+        seen[node] = true;
+        for (int neigh : graph.get(node)){
+            if (!seen[neigh]){
+                dfs(graph,neigh,seen);
+            }
+        }
+    }
+    
+    public boolean hasCycle(ArrayList<ArrayList<Integer>> graph, int node, int parent, boolean[] seen){
+        //mark
+        seen[node] = true;
+        for (int neigh : graph.get(node)){
+            if (!seen[neigh]){
+                if (!hasCycle(graph,neigh,node,seen)){
+                    return false;
+                }
+            }
+            //no back edge
+            else if (neigh != parent){
+                return false;
+            }
+        }
+        return true;
+        
+    }
+}
