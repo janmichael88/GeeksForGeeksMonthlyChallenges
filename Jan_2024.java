@@ -304,3 +304,173 @@ class Solution {
         
     }
 }
+/////////////////////////
+// Shortest Prime Path
+// 24JAN24
+////////////////////////
+class Solution{
+    
+    public int solve(int Num1,int Num2){
+        //code here
+        //better suited for BFS, but we could also do DP
+        /*
+        first generate primes from 1000 to 9999
+        put them all in hashamp
+        then define functino that gets neighbors under the current number in contention
+        then use bfs but cache states along the way
+        cache them and their steps away, if we see them, get the min distance
+        */
+        HashSet<Integer> primes = getPrimes(9999);
+        HashSet<Integer> seen = new HashSet<>();
+        int ans = 0;
+        Deque<Integer> q = new ArrayDeque<>();
+        q.add(Num1);
+        
+        while (!q.isEmpty()){
+            int N = q.size();
+            for (int i = 0; i < N; i++){
+                int curr = q.pollFirst();
+                if (curr == Num2){
+                    return ans;
+                }
+                seen.add(curr);
+                //get neighs
+                HashSet<Integer> neighs = getNeighs(curr,primes);
+                for (int neigh : neighs){
+                    if (!seen.contains(neigh)){
+                        q.add(neigh);
+                    }
+                }
+                
+            }
+            ans++;
+            
+        }
+        return -1;
+    }
+    public HashSet<Integer> getPrimes(int num){
+        boolean[] is_prime = new boolean[num+1];
+        Arrays.fill(is_prime, true);
+        for (int i = 2; i <= num; i++){
+            if (is_prime[i]){
+                int curr = i*i;
+                while (curr < num + 1){
+                    is_prime[curr] = false;
+                    curr += i;
+                }
+            }
+        }
+        HashSet<Integer> primes = new HashSet<>();
+        for (int i = 1000; i <= num; i++){
+            if (is_prime[i]){
+                primes.add(i);
+            }
+        }
+        return primes;
+    }
+    public HashSet<Integer> getNeighs(int num, HashSet<Integer> primes){
+        //we can swap at one position at a time
+        int[] curr_num = new int[4];
+        int idx = 3;
+        while (num > 0){
+            curr_num[idx] = num % 10;
+            idx--;
+            num = num / 10;
+        }
+        HashSet<Integer> neighs = new HashSet<>();
+        for (int i = 0; i < 4; i++){
+            //first position can only do 1 to 9
+            if (i == 0){
+                for (int j = 1; j <= 9; j++){
+                    int[] neigh = Arrays.copyOf(curr_num, curr_num.length);
+                    neigh[i] = j;
+                    int neigh_num = 0;
+                    for (int num_2 : neigh){
+                        neigh_num = neigh_num*10 + num_2;
+                    }
+                    if (primes.contains(neigh_num)){
+                        neighs.add(neigh_num);
+                    }
+                    
+                }
+            }
+            else{
+                for (int j = 0; j <= 9; j++){
+                    int[] neigh = Arrays.copyOf(curr_num, curr_num.length);
+                    neigh[i] = j;
+                    int neigh_num = 0;
+                    for (int num_2 : neigh){
+                        neigh_num = neigh_num*10 + num_2;
+                    }
+                    if (primes.contains(neigh_num)){
+                        neighs.add(neigh_num);
+                    }
+                    
+                }
+            }
+        }
+        return neighs;
+    }
+
+}
+
+//dont forget djikstras with dist array!
+class Solution{
+    int mxp; // maximum value for prime numbers
+    int[] prime; // array to store prime numbers
+    
+    Solution(){
+        mxp = 9999; // initialize maximum value for prime numbers
+        prime = new int[10001]; // initialize array for prime numbers
+        Arrays.fill(prime,1); // set all elements in prime array to 1
+        prime[1] = 0; // set the value at index 1 to 0, as 1 is not a prime number
+        
+        // Seive Of Eratosthenes
+        // loop to find prime numbers using Seive Of Eratosthenes algorithm
+        for(int i = 2; i <= mxp; i++){
+            if(prime[i] == 1){
+                for(int j = 2; j*i <= mxp; j++){
+                    prime[j*i] = 0; // mark current number as non-prime in prime array
+                }
+            }
+        }
+    }
+    
+    int bfs(int source,int destination){
+        int[] dp = new int[10001]; // array to store the shortest distance from source to destination
+        Arrays.fill(dp,-1); // set all elements in dp array to -1
+        int[] vis = new int[10001]; // array to track visited nodes
+        
+        Queue<Integer> q = new LinkedList<>(); // queue for BFS traversal 
+        q.add(source); // add source to queue
+        dp[source] = 0; // set the distance of source from itself to 0
+        
+        while(q.size() > 0 ){
+            int current = q.poll(); // get the current node from queue
+            if(vis[current] == 1)
+                continue; // if current node is already visited, continue to next iteration
+            vis[current] = 1; // mark current node as visited
+            
+            String s = Integer.toString(current); // convert current number to string
+            for(int i = 0; i< 4; i++){
+                for(char ch ='0' ;ch <= '9';ch++){
+                    if(ch == s.charAt(i)||(ch=='0'&&i==0))
+                        continue; // if the digit in the string is equal to current digit or it is 0 at first position, continue to next iteration
+                    String nxt = s;
+                    nxt = s.substring(0,i)+ch+s.substring(i+1); // replace digit at index i with ch character in the string
+                    int nxtN = Integer.valueOf(nxt); // convert the new string to integer
+                    if(prime[nxtN] == 1 && dp[nxtN] == -1){
+                        // if the new number is prime and it is not visited yet
+                        dp[nxtN] = 1+dp[current]; // set the shortest distance to the new number
+                        q.add(nxtN); // add the new number to queue for traversal
+                    }
+                }
+            }
+        }
+        return dp[destination]; // return the shortest distance from the source to destination node
+    }
+    
+    int solve(int Num1,int Num2){
+        return bfs(Num1,Num2); // solve the problem by finding the shortest distance between Num1 and Num2
+    }
+}
