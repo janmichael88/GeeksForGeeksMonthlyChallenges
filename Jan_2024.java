@@ -461,7 +461,7 @@ class Solution{
                     int nxtN = Integer.valueOf(nxt); // convert the new string to integer
                     if(prime[nxtN] == 1 && dp[nxtN] == -1){
                         // if the new number is prime and it is not visited yet
-                        dp[nxtN] = 1+dp[current]; // set the shortest distance to the new number
+                        dp[nxtN] = 1 + dp[current]; // set the shortest distance to the new number
                         q.add(nxtN); // add the new number to queue for traversal
                     }
                 }
@@ -472,5 +472,56 @@ class Solution{
     
     int solve(int Num1,int Num2){
         return bfs(Num1,Num2); // solve the problem by finding the shortest distance between Num1 and Num2
+    }
+}
+
+////////////////////////////////////////////////
+// Fractional Knapsack
+// 25JAN24
+/////////////////////////////////////////////////
+class Solution
+{
+    //Function to get the maximum total value in the knapsack.
+    double fractionalKnapsack(int W, Item arr[], int n) 
+    {
+        // Your code here
+        /*
+        divide value/weight to get ratio
+        then use states (i and current weight)
+        but thats just N*w*w complexity, cant do item index and weight, too many states
+        hint says greedy, get ratios and use as much as we can of each item
+        sort
+        i need to some some amount of each item n
+        i need to pair each ratio with its weigh and value as []
+        */
+        double[][] ratios = new double[n][3];
+        for (int i = 0; i < n; i++){
+            double r = (double) arr[i].value / (double) arr[i].weight;
+            double weight = (double) arr[i].weight;
+            double value = (double) arr[i].value;
+            ratios[i][0] = r;
+            ratios[i][1] = weight;
+            ratios[i][2] = value;
+        }
+        
+        Arrays.sort(ratios, Comparator.comparingDouble((double[] foo) -> foo[0]).reversed());
+        double ans = 0.0;
+        for (double[] d : ratios){
+            //if its too much weight
+            if (d[1] >= W){
+                //calcualte how much we should take, or use whats left for this item
+                //we dont need to use all n items
+                ans += (W/d[1])*d[2];
+                return ans;
+            }
+            else{
+                //if we're under weight for this time, take it all
+                //decrement the wiehgt
+                ans += d[2];
+                W -= d[1];
+            }
+        }
+        
+        return ans;
     }
 }
