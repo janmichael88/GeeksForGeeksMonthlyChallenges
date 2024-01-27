@@ -521,7 +521,164 @@ class Solution
                 W -= d[1];
             }
         }
+        /*
+         * //another way
+         *         for (double[] d : ratios){
+            //if we can take it
+            if (d[1] < W){
+                W -= d[1];
+                ans += d[2];
+            }
+            //too much weight
+            else{
+                double part = W / d[1];
+                ans += part*d[2];
+                break;
+            }
+        }
+         */
         
         return ans;
+    }
+}
+
+///////////////////////////////////////////////
+// Brackets in Matrix Chain Multiplication
+// 27JAN24
+///////////////////////////////////////////////
+class Solution{
+    //global
+    static String str = "";
+    static char name = 'A';
+    static String matrixChainOrder(int p[], int n){
+        // code here
+        /*
+        need to first apply code to matrix chain multiplactaion
+        if we have matricies ABCD, we can think trying all partitions A*(BCD) (AB)*(CD) etc
+        this is eseentialy computhinng matrix chain multiplcation, rather get the minimum (or max)
+        and find the path that gives the result
+        so for dome dp(i,j) we try all k between i and j
+            left = dp(i,k)
+            right = dp(k+1,j)
+            left+right + cost of multiplying the current matrices
+        
+        rather dp(i,j):
+            if (i == j){
+                return 0
+            }
+            min = float('inf')
+            for k in range(i,j-1+1):
+                min= min(min, p[k]*p[j]*p[i-1] + dp(i,k) + dp(k+1,j))
+            return min
+            
+        */
+        str = "";
+        name = 'A';
+        int[][] dp = new int[n][n];
+        int[][] bracket = new int[n][n];
+        for (int i = 0; i < n; i++){
+            for (int j = 0; j < n; j++){
+                dp[i][j] = -1;
+            }
+        }
+        solve(p, 1, n-1, dp,bracket);
+        printOptimalParenthesis(1, n-1, bracket);
+        return str;
+    }
+    static int solve(int[] p, int i, int j, int[][] dp, int[][] bracket) {
+        if(i >= j) {
+            return 0;
+        }
+        
+        if(dp[i][j] != -1)return dp[i][j];
+        int min = Integer.MAX_VALUE;
+        for(int k = i; k < j; k++) {
+            int left = solve(p, i, k, dp, bracket);
+            int right = solve(p, k+1, j, dp, bracket);
+            int temp = left + right + p[i-1] * p[k] * p[j];
+            if(min > temp) {
+                min = Math.min(min, temp);
+                dp[i][j] = min;
+                bracket[i][j] = k;
+            }
+        }
+        return min;
+    }
+    
+    public static void printOptimalParenthesis(int i, int j, int[][] memoization ) {
+        if (i == j) {
+            str = str + name;
+            name++;
+        } else {
+            int k = memoization[i][j];
+            str = str + "(";
+            printOptimalParenthesis(i, k, memoization);
+            printOptimalParenthesis(k + 1, j, memoization);
+            str = str + ")";
+        }
+    }
+}
+
+
+class Solution{
+    static String matrixChainOrder(int p[], int n){
+        // code here
+        Map<Integer,String> d = new HashMap<>();
+        for (int i = 0; i < n; i++){
+            d.put(i, Character.toString('A' + i));
+
+        }
+        
+        Map<List<Integer>, Pair<Integer,String>> memo = new HashMap<>();
+        return chain(0,n-1,p,d,memo).getValue();
+    }
+    
+    static Pair<Integer,String> chain(int i, int j,int[] p, Map<Integer,String> d, Map<List<Integer>, Pair<Integer,String>> memo){
+        List<Integer> key = List.of(i,j);
+        if (j - i == 1){
+            return new Pair<>(0,d.get(i));
+        }
+        
+        if (memo.containsKey(key)){
+            return memo.get(key);
+        }
+        int ms = Integer.MAX_VALUE;
+        String s = "";
+        for (int k = i + 1; k < j; k++) {
+            Pair<Integer, String> result1 = chain(i, k, p,d,memo);
+            Pair<Integer, String> result2 = chain(k, j, p,d,memo);
+
+            int score1 = result1.getKey();
+            int score2 = result2.getKey();
+            int score = score1 + score2 + p[i] * p[k] * p[j];
+
+            if (score < ms) {
+                ms = score;
+                s = "(" + result1.getValue() + result2.getValue() + ")";
+            }
+        }
+
+        Pair<Integer, String> result = new Pair<>(ms, s);
+        memo.put(key, result);
+        return result;
+        
+        
+    }
+    static class Pair<K, V> {
+        private final K key;
+        private final V value;
+
+        public Pair(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public K getKey() {
+            return key;
+        }
+
+        public V getValue() {
+            return value;
+        }
     }
 }
