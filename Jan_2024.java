@@ -682,3 +682,78 @@ class Solution{
         }
     }
 }
+
+/////////////////////////////////////
+// Geekina Hate 1s
+// 29JAN24
+////////////////////////////////////
+class Solution{
+    public long findNthNumer(int n, int k){
+        // Code Here.
+        /*
+        brute force would be to try all numbrs up to n and only increment when we have <= k set bits
+        then just return the counts
+        we can only have at most 63 set bits
+        if we have some number with k set bits, how big can that number be?
+            set the k most signigicant bits, ((1 << k) - 1) | (1 << 64)
+        need to use dp, to effecicenly calculate the count of numbers with att most k set bits given some n
+        then we can use binary search to reduce search space
+        use dp to answer: givne some number n and k, find the count of the numbers with atmost k set bits with number <= n
+        we also could have counted the numbers using factorial
+                need a way to find the count of numbers which are <= n, and where we have at most k set bits
+        then we can use binary search to find the counts by reducing search space
+        say we have some number in format
+        [1,0,0,1,0]  we can only check numbers less than this number, lets call index array
+        [0,1,2,3,4], we cant promote the 0 to index 1, because that would be more than n, in fact we cant promote any index where there is a zero
+        since this would make it larger, 
+        */
+        long[][][] memo = new long[2][65][65];
+        reset(memo);
+        long low = 0;
+        long high = (long)(1e18);
+        while (low <= high){
+            long mid = low + (high - low) / 2;
+            long count = find(mid,k,memo);
+            if (count >= n){
+                high = mid - 1;
+                
+            }
+            else{
+                low = mid + 1;
+            }
+        }
+        return  low;
+    }
+    public long find(long n, int k, long[][][] memo){
+        char[] s = Long.toBinaryString(n).toCharArray();
+        reset(memo);
+        return dp(s,s.length,1,k,memo);
+    }
+    public long dp(char[] s, int n, int tight, int k, long[][][] memo){
+        if (k < 0)
+            return 0;
+        if (n == 0)
+            return 1;
+        if (memo[tight][k][n] != -1)
+            return memo[tight][k][n];
+        int ub = (tight == 1 ? (int) (s[s.length - n] - '0') : 1);
+        long ways = 0;
+        for (int dig = 0; dig <= ub; dig++){
+            if (dig == ub)
+                ways += dp(s,n-1,tight,k-dig,memo);
+            else
+                ways += dp(s,n-1,0,k-dig,memo);
+        }
+        
+        memo[tight][k][n] = ways;
+        return ways;
+    }
+    public void reset(long[][][] memo){
+        for (int i = 0; i < 65; i++){
+            Arrays.fill(memo[0][i], -1);
+            Arrays.fill(memo[1][i], -1);
+        }
+    }
+
+    
+}
